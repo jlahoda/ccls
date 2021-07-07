@@ -1,4 +1,4 @@
-// Copyright 2017-2018 ccls Authors
+// Copyright ccls Authors
 // SPDX-License-Identifier: Apache-2.0
 
 #include "filesystem.hh"
@@ -25,7 +25,7 @@
 namespace ccls {
 using namespace llvm;
 
-std::vector<const char *> SEMANTIC_TOKENS = {
+const char * SEMANTIC_TOKENS[] = {
   "unknown",
 
   "file",
@@ -60,7 +60,7 @@ std::vector<const char *> SEMANTIC_TOKENS = {
   "macro"
 };
 
-std::vector<const char *> SEMANTIC_MODIFIERS = {
+const char * SEMANTIC_MODIFIERS[] = {
     "declaration", //1
     "definition",  //2
     "static"       //4
@@ -132,9 +132,10 @@ struct ServerCap {
   Config::ServerCap::Workspace workspace;
   struct SemanticTokenProvider {
       struct SemanticTokensLegend {
-          std::vector<const char *> tokenTypes = SEMANTIC_TOKENS;
-          std::vector<const char *> tokenModifiers = SEMANTIC_MODIFIERS;
+          std::vector<const char *> tokenTypes{std::begin(SEMANTIC_TOKENS), std::end(SEMANTIC_TOKENS)};
+          std::vector<const char *> tokenModifiers{std::begin(SEMANTIC_MODIFIERS), std::end(SEMANTIC_MODIFIERS)};
       } legend;
+      bool range = true;
       bool full = true;
   } semanticTokensProvider;
 };
@@ -158,7 +159,7 @@ REFLECT_STRUCT(ServerCap, textDocumentSync, hoverProvider, completionProvider,
                documentOnTypeFormattingProvider, renameProvider,
                documentLinkProvider, foldingRangeProvider,
                executeCommandProvider, workspace, semanticTokensProvider);
-REFLECT_STRUCT(ServerCap::SemanticTokenProvider, legend, full);
+REFLECT_STRUCT(ServerCap::SemanticTokenProvider, legend, range, full);
 REFLECT_STRUCT(ServerCap::SemanticTokenProvider::SemanticTokensLegend, tokenTypes, tokenModifiers);
 
 struct DynamicReg {
